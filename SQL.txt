@@ -1,0 +1,12 @@
+데이터 독립성이 보장된 최초의 데이터 모델이다.
+물리(Physical) = Ordering, Indexing, Access Path 종속적
+논리(Logical) = 데이터 항목 자체에 집중
+테이블 형태, 중복이 최소화 된 데이터 모델이다.
+
+데이터 모델을 봤을 때 이해하는 법
+DVD Rental Model 로 보자
+ 
+Reference Data(사업 환경 설정) : 언어, 카테고리, 나라, 도시 등
+Master Data(사업 활동 주체와 대상) : 고객, 상품, 가게, 영화, 고객 주소 등
+Transaction Data(사업 활동) : 돈과 관련, 주문 등
+재사용률은 위에서 부터 아래 순이다.
