@@ -155,12 +155,13 @@ from
 inner join staff s 
 on
 	r.staff_id = s.staff_id
-	and s.first_name = 'Mike'
-	and s.last_name = 'Hillyer'
 inner join customer c 
 on
 	r.customer_id = c.customer_id
-	and c.first_name = 'Gloria'
-	and c.last_name = 'Cook'
 where
 	cast(r.rental_date as DATE) between '2005-06-01' and '2005-06-14'
+	and (
+		s.first_name || ' ' || s.last_name = 'Mike Hillyer'
+		or
+		c.first_name || ' ' || c.last_name = 'Gloria Cook'
+	)
