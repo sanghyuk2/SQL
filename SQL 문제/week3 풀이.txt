@@ -1,0 +1,166 @@
+참고) from 절 다음에 where 절이다.
+from 안에 join 절 포함한다고 보면 된다.
+
+from table_name
+join table_name2
+where ..
+
+--1번
+select
+	c.customer_id,
+	c.first_name,
+	c.last_name,
+	c.email,
+	a.address,
+	a.district,
+	a.postal_code,
+	a.phone
+from
+	customer c
+left join address a
+on
+	c.address_id = a.address_id;
+
+
+--2번
+select
+	c.customer_id,
+	c.first_name,
+	c.last_name,
+	c.email,
+	a.address,
+	a.district,
+	a.postal_code,
+	a.phone,
+	d.city
+from
+	customer c
+left join address a
+on
+	c.address_id = a.address_id
+left join city d
+on
+	a.city_id = d.city_id;
+
+
+--3번
+select
+	c.first_name,
+	c.last_name,
+	c.email,
+	a.phone
+from
+	customer c
+left join address a
+on
+	c.address_id = a.address_id
+left join city d
+on
+	a.city_id = d.city_id
+where
+	d.city = 'Lima';
+
+
+--4번
+select
+	r.*,
+	c.first_name || ', ' || c.last_name as c_full_name,
+	s.first_name || ', ' || s.last_name as s_full_name
+from
+	rental r
+inner join customer c 
+on
+	r.customer_id = c.customer_id
+inner join staff s 
+on
+	r.staff_id = s.staff_id
+	
+	
+--5번
+select
+	c.first_name,
+	c.last_name,
+	c.email,
+	a.phone,
+	c2.country,
+	c3.city
+from
+	customer c
+left join address a 
+on
+	c.address_id = a.address_id
+left join city c3
+on
+	a.city_id = c3.city_id
+left join country c2 
+on
+	c3.country_id = c2.country_id
+where
+	c2.country <> 'China';
+
+
+--6번 
+select
+	f.title,
+	f.description,
+	f.length
+from
+	film f
+join film_category fc
+on
+	f.film_id = fc.film_id
+join category c 
+on
+	fc.category_id = c.category_id
+where
+	f.length between 60 and 100
+	and c.name in ('Music')
+order by
+	f.length;
+
+
+--7번 (틀렸음)
+select
+	a.actor_id,
+	a.first_name,
+	a.last_name,
+	case
+		when angels_actor.actor_id is not null
+then 'Y'
+		else 'N'
+	end as angelslife_flag
+from
+	actor a
+left join (
+	select
+		f.film_id,
+		f.title,
+		fa.actor_id
+	from
+		film f
+	join film_actor fa on
+		f.film_id = fa.film_id
+	where
+		title = 'Angels Life'
+) as angels_actor
+on
+	a.actor_id = angels_actor.actor_id
+
+	
+--8번
+select
+	r.*
+from
+	rental r
+inner join staff s 
+on
+	r.staff_id = s.staff_id
+	and s.first_name = 'Mike'
+	and s.last_name = 'Hillyer'
+inner join customer c 
+on
+	r.customer_id = c.customer_id
+	and c.first_name = 'Gloria'
+	and c.last_name = 'Cook'
+where
+	cast(r.rental_date as DATE) between '2005-06-01' and '2005-06-14'
