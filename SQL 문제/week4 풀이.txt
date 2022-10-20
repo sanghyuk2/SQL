@@ -1,0 +1,143 @@
+
+--1번 where-> group by -> order by 순이다.
+select
+	rating,
+	count(distinct film_id)
+from
+	film
+group by
+	rating;
+
+--2번
+select
+	a.actor_id,
+	a.first_name || ' ' || a.last_name as actor_fullname
+,
+	count(distinct counting.film_id)
+from
+	actor a
+join (
+	select
+		f.film_id,
+		f.title,
+		fa.actor_id
+	from
+		film f
+	join film_actor fa
+	on
+		f.film_id = fa.film_id
+) as counting
+on
+	a.actor_id = counting.actor_id
+group by
+	a.first_name,
+	a.last_name,
+	a.actor_id
+
+
+--답안
+select
+	d.*,
+	a.first_name,
+	a.last_name
+from
+	(
+	select
+		actor_id,
+		count(distinct film_id) cnt
+	from
+		film_actor fa
+	group by
+		actor_id 
+) as d
+left outer join actor a 
+on
+	d.actor_id = a.actor_id
+
+--3번
+-- customer -> address -> city -> country
+select
+	c.country,
+	count(c3.customer_id) cnt
+from
+	country c
+join city c2 
+on
+	c.country_id = c2.country_id
+join address a 
+on
+	c2.city_id = a.city_id
+join customer c3 
+on
+	c3.address_id = a.address_id
+group by
+	c.country
+order by
+	cnt desc
+
+
+--4번
+
+select
+	customer_id,
+	count(distinct rental_id) as rental_count
+from
+	rental
+where
+	cast(rental_date as DATE) = '2005-05-26'
+	--	rental_date between '2005-05-26 00:00:00' and '2005-05-26 23:59:59'
+group by
+	customer_id
+having
+	count(rental_id) >= 2
+order by
+	rental_count desc
+
+--5번
+select
+	actor_id,
+	count(film_id)
+from
+	film_actor fa
+group by
+	actor_id
+order by
+	count(film_id) desc
+limit 5
+
+
+
+--6번
+select
+	rating.rating,
+	count(distinct pay.customer_id)
+from
+	payment pay
+join (
+	select
+		c.customer_id,
+		case
+			when round(sum(amount), 0) >= 151
+	then 'A'
+			when round(sum(amount), 0) between 101 and 150
+	then 'B'
+			when round(sum(amount), 0) between 51 and 100
+	then 'C'
+			else 'D'
+		end as rating
+	from
+		payment p
+	join customer c 
+	on
+		p.customer_id = c.customer_id
+	group by
+		c.customer_id
+	order by
+		c.customer_id
+	) as rating
+	on
+	pay.customer_id = rating.customer_id
+group by
+	rating.rating
+order by
+	rating
