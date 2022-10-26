@@ -1,138 +1,22 @@
 --1번
-
---1. 180분 이상 영화 출연 배우
-select actor_id, 'over_length_180' as flag
-from film_actor fa 
-where film_id in (
---180분 이상의 영화
-	select film_id
-	from film f
-	where length >= 180
-)
-union
---2. R 등급의 영화 출연 배우
-select actor_id, 'rating_R' as flag
-from film_actor fa 
-where film_id in (
--- R 등급 영화
-	select film_id
-	from film f
-	where rating = 'R'
-)
-
-
---2번
-
-select * from film f 
-
-select * from film_category fc 
-
-select * from category c 
-
-
-select film_id 
-from film f 
-except
-select film_id
-from film_category fc 
-where category_id in (
-	select category_id
-	from category c 
-	where name in ('Action', 'Animation', 'Horror')
-)
-order by film_id 
-
-
---3번
-select staff_id as id, first_name, last_name, 'Staff_Info' as flag
-from staff s
-union all
-select customer_id, first_name, last_name, 'Customer_Info' as flag
-from customer c 
-
-
---4번
-
---중복 데이터 없다!
-
-
---5번 (틀렸음)
-단계별로 select문을 짜고 결합하는걸 의식하자
-
-select * from country 
-
-select * from city c 
-
-select * from address a 
-
-select * from customer c 
-
+select * from rental r 
 select * from payment p 
 
 
--- 국가 및 도시별 매출액
-select
-	country,
-	city,
-	sum(amount) as sum_amount
-from
-	(
-	select
-		c3.country,
-		c2.city,
-		p.amount
-	from
-		payment p
-	join customer c on
-		p.customer_id = c.customer_id
-	join address a on
-		c.address_id = a.address_id
-	join city c2 on
-		a.city_id = c2.city_id
-	join country c3 on
-		c2.country_id = c3.country_id) as db
-group by
-	country,
-	city
+select first_name, last_name
+from (
+select p.customer_id, c.first_name, c.last_name, sum(amount) as pay
+from payment p, customer c
+where p.customer_id = c.customer_id 
+group by p.customer_id, c.first_name, c.last_name 
+order by pay desc
+limit 1
+) db
 
-union all
--- 2. 국가 매출액
-select
-	country,
-	null,
-	sum(amount) as sum_amount
-from
-	(
-	select
-		c3.country,
-		p.amount
-	from
-		payment p
-	join customer c on
-		p.customer_id = c.customer_id
-	join address a on
-		c.address_id = a.address_id
-	join city c2 on
-		a.city_id = c2.city_id
-	join country c3 on
-		c2.country_id = c3.country_id) as db
-group by
-	country
-union all
---3.전체 매출액
-select
-	null, null, sum(amount) as sum_amount
-from
-	(
-	select
-		p.amount
-	from
-		payment p
-	join customer c on
-		p.customer_id = c.customer_id
-	join address a on
-		c.address_id = a.address_id
-	join city c2 on
-		a.city_id = c2.city_id
-	join country c3 on
-		c2.country_id = c3.country_id) as db
+select 
+where 
+exists (
+select 1
+from rental r, film f 
+where r.
+where return_date - rental_date > 0)
