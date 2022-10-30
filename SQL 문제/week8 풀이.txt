@@ -1,0 +1,75 @@
+--1번
+select
+	c3.country,
+	c2.city ,
+	sum(p.amount)
+from
+	payment p
+join customer c on
+	p.customer_id = c.customer_id
+join address a on
+	c.address_id = a.address_id
+join city c2 on
+	a.city_id = c2.city_id
+join country c3 on
+	c2.country_id = c3.country_id
+group by
+	grouping sets (
+(c3.country,
+	c2.city),
+	(c3.country),
+	()
+);
+
+--2번
+select
+	c3.country,
+	c2.city ,
+	sum(p.amount)
+from
+	payment p
+join customer c on
+	p.customer_id = c.customer_id
+join address a on
+	c.address_id = a.address_id
+join city c2 on
+	a.city_id = c2.city_id
+join country c3 on
+	c2.country_id = c3.country_id
+group by
+	rollup (c3.country,
+	c2.city)
+
+--3번
+select
+	distinct actor_id,
+	count(film_id)
+from
+	film_actor fa
+group by
+	rollup (actor_id)
+
+--4번
+select
+	f.release_year,
+	l.name,
+	count(distinct film_id)
+from
+	film f
+join "language" l on
+	f.language_id = l.language_id
+group by
+	f.release_year,
+	rollup (l."name")
+
+--5번
+select
+	distinct store_id, active, count(distinct customer_id)
+from
+	customer c
+group by
+	grouping sets (
+(store_id,
+	active),
+	(active)
+)
