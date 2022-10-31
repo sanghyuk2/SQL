@@ -1,75 +1,74 @@
 --1번
 select
-	c3.country,
-	c2.city ,
-	sum(p.amount)
+	c2.first_name,
+	c2.last_name
 from
-	payment p
-join customer c on
-	p.customer_id = c.customer_id
-join address a on
-	c.address_id = a.address_id
-join city c2 on
-	a.city_id = c2.city_id
-join country c3 on
-	c2.country_id = c3.country_id
-group by
-	grouping sets (
-(c3.country,
-	c2.city),
-	(c3.country),
-	()
-);
+	(
+	select
+		customer_id,
+		sum(amount),
+		row_number () over(
+		order by sum(amount) desc) as rnum
+	from
+		payment p
+	group by
+		customer_id 
+) as db
+join customer c2 on db.customer_id = c2.customer_id  
+where rnum = 1
 
 --2번
-select
-	c3.country,
-	c2.city ,
-	sum(p.amount)
-from
-	payment p
-join customer c on
-	p.customer_id = c.customer_id
-join address a on
-	c.address_id = a.address_id
-join city c2 on
-	a.city_id = c2.city_id
-join country c3 on
-	c2.country_id = c3.country_id
-group by
-	rollup (c3.country,
-	c2.city)
+
+select db.month, db.gap
+from (
+select extract(year from date(p.payment_date)) as year,
+extract(month from date(p.payment_date)) as month,
+sum(amount),
+coalesce (lag(sum(amount),1) over(), 0),
+coalesce (sum(amount) - lag(sum(amount),1) over(), 0) as gap
+from payment p 
+group by extract(year from date(p.payment_date)),
+extract(month from date(p.payment_date))
+order by month
+) as db
+where db.gap < 0
+
 
 --3번
-select
-	distinct actor_id,
-	count(film_id)
-from
-	film_actor fa
-group by
-	rollup (actor_id)
+
+select s.store_id, sum(amount),
+rank() over(order by sum(amount))
+from store s
+join inventory i on s.store_id = i.store_id 
+join rental r on i.inventory_id = r.inventory_id 
+join payment p on r.rental_id = p.rental_id 
+group by s.store_id
+
 
 --4번
-select
-	f.release_year,
-	l.name,
-	count(distinct film_id)
-from
-	film f
-join "language" l on
-	f.language_id = l.language_id
-group by
-	f.release_year,
-	rollup (l."name")
+select * 
+from (
+	select name as category, title, count(distinct rental_id) as cnt,
+	row_number () over(partition by name order by count(distinct rental_id) desc, title asc) as rank
+	from (
+		select r.rental_id, fc.film_id, f.title, c.category_id, c."name" 
+		from rental r 
+		join inventory i on i.inventory_id = r.inventory_id 
+		join film_category fc on fc.film_id  = i.film_id 
+		join film f on fc.film_id = f.film_id 
+		join category c on fc.category_id = c.category_id 
+		) db
+	group by name, title
+) db
+where db.rank <= 5
 
 --5번
-select
-	distinct store_id, active, count(distinct customer_id)
-from
-	customer c
-group by
-	grouping sets (
-(store_id,
-	active),
-	(active)
-)
+
+select c."name", sum(p.amount) as sum_amount,
+first_value(c.)
+from payment p
+join rental r on p.rental_id = r.rental_id 
+join inventory i on i.inventory_id = r.inventory_id 
+join film_category fc on i.film_id = fc.category_id 
+join category c on fc.category_id = c.category_id 
+group by c.name
