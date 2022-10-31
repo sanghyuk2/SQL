@@ -64,11 +64,17 @@ where db.rank <= 5
 
 --5번
 
-select c."name", sum(p.amount) as sum_amount,
-first_value(c.)
-from payment p
-join rental r on p.rental_id = r.rental_id 
-join inventory i on i.inventory_id = r.inventory_id 
-join film_category fc on i.film_id = fc.category_id 
-join category c on fc.category_id = c.category_id 
-group by c.name
+select first_, last_
+from (
+	select c."name", sum(p.amount) as sum_amount,
+	first_value(c.name) over(order by sum(p.amount) asc) as first_,
+	last_value(c.name) over(order by sum(p.amount) asc
+	rows between unbounded preceding and unbounded following) as last_
+	from payment p
+	join rental r on p.rental_id = r.rental_id 
+	join inventory i on i.inventory_id = r.inventory_id 
+	join film_category fc on i.film_id = fc.category_id 
+	join category c on fc.category_id = c.category_id 
+	group by c.name
+	) db
+limit 1
