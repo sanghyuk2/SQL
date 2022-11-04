@@ -1,0 +1,71 @@
+일반 집합 연산자
+1.UNION : UNION기능
+2.INTERSECTION : INTERSECT기능
+3.DIFFERECE : EXCEPT(ORACLE은 MINUS)
+4.PRODUCT : CROSS JOIN기능
+
+순수 관계 연산자
+1.SELECT : WHERE절로 구현
+2.PROJECT : SELECT절로 구현
+3.(NATURAL)JOIN : 다양한 JOIN기능으로 구현
+4.DIVIDE : 현재 사용 X
+
+조인의 형태
+INNER JOIN
+NATURAL JOIN : 두 테이블 간 동일한 이름을 갖는 모든 컬럼들에 대해 EQUI(=)JOIN 수행, 식별자(ALIAS)를 가질 수 없다!!
+USING 조건절 : FROM절의 USING조건절 이용하면 같은 이름을 가진 칼럼들 중 원하는 칼럼에 대해서만 선택적으로 EQUI JOIN 가능, 식별자(ALIAS)를 가질 수 없다!!
+ON 조건절 
+CROSS JOIN : 2건있는 테이블 두 개 JOIN하면 4건 나옴
+OUTER JOIN
+
+<OUTER JOIN>
+SELECT A.EMP_NO, A.EMP_NM,B.DEPT_CD, B.DEPT_NM
+FROM TB_EMP A, TB_DEPT B
+WHERE A.DEPT_CD IN ('00000', '100001')
+AND A.DEPT_CD = B.DEPT_CD(+)
+;
+
+TB_EMP A 테이블을 레프트조인한다( '(+)'가 중요!!)
+다 보여주고자 하는 테이블의 기준 컬럼에 (+)를 붙이지 않는다!!
+(+)없으면 그냥 INNER JOIN이다.
+
+집합 연산자
+1.UNION : 합집합, 중복 행은 하나의 행
+2.UNION ALL : 합집합, 중복 행도 출력
+3.INTERSECT : 교집합
+4.EXCEPT : 차집합 (ORACLE에서는 MINUS)
+
+계층형 질의와 SELF 조인
+계층형 질의 : 테이블에 계층 형 데이터가 존재할 경우 조회하기 위해 계층 형 질의(Hierarchical Query)를 사용
+계층형 데이터 : 동일 테이블에 계층적으로 상위/하위 데이터가 포함된 데이터
+
+오라클 계층 형 SQL
+1.SELECT
+2.FROM TABLE
+3.WHERE
+4.START WITH 조건 : 계층 구조 전개 시작위치 지정. 즉, 루트 데이터 지정
+5.CONNECT BY [NOCYCLE] [PRIOR] A AND B : 
+CONNECT BY : 다음 전개 자식 데이터
+PRIOR 자식 = 부모 : 자식 -> 부모 방향 전개하는 순방향
+PRIOR 부모 = 자식 : 부모 -> 자식 방향 전개 역방향
+NOCYCLE 추가하면 사이클이 발생한 이후 데이터는 전개하지 않는다.
+
+사용방법 
+START WITH A.EMP_NM = '이경오'
+CONNECT BY PRIOR A.EMP_NO = A.DIRECT_MANAGER_EMP_NO (자식 -> 부모 순방향)
+
+
+6. ORDER SIBLINGS BY 칼럼 : 형제 노드 사이에서 정렬 수행
+
+계층 형 질의에서 사용되는 가상 칼럼
+LEVEL : 루트데이터면1, 그 하위면 2, 하위데이터가 있을 때마다 1씩 증가
+CONNECT_BY_ISLEAF : 전개과정에서 해당 데이터가 리프 데이터(맨 마지막 하위 데이터)이면 1 아니면 0
+CONNECT_BY_ISCYCLE : 전개과정에서 자식을 갖는데 해당 데이터가 조상으로서 존재하면1 아니면 0
+CONNECT_BY_ROOT : 최상위 관리자 출력
+SYS_CONNECT_BY_PATH : 조직인원 경로 출력
+
+SELF JOIN
+A.매니저번호 = B.사원번호
+하면 A테이블의 상사명이 오른쪽에 붙는다
+하지만 셀프 이너조인은 회장은 나오지 않아! 왜냐하면 회장의 상사는 없기 때문
+이 때 LEFT OUTER JOIN 사용해서 회장까지 뽑아낼 수 있다. 

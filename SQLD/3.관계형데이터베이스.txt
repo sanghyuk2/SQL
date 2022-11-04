@@ -20,8 +20,10 @@ SQL 종류 :
 SELECT
 INSERT,UPDATE,DELETE
 2. 데이터 정의어(DDL: Data Definition Language)
-GRANT, REVOKE, CREATE
-3. 트랜잭션 제어어(TCL: Transaction Control Language)
+CREATE, ALTER, DROP, RENAME
+3. 데이터 제어어(DCL: Data Control Language)
+GRANT, REVOKE
+4. 트랜잭션 제어어(TCL: Transaction Control Language)
 COMMIT, ROLLBACK
 
 테이블 : 
@@ -66,11 +68,11 @@ pk는 null입력 불가
 고유 키(Unique Key): 테이블에 저장된 행 데이터 고유하게 식별하기 위함
 null 입력 가능
 
-NOT NULL : null 입력 금지
+NOT NULL : null 입력 금지 명시적으로 표현
 
 CHECK : 입력할 수 있는 값 종류 및 범위 제한
 
-외래 키(Foreign Key): 다른 테이블의 pk를 외래 키로 지정하는 경우(참조무결성제약조건)
+외래 키(Foreign Key): 다른 테이블의 pk를 외래 키로 지정하는 경우(참조무결성제약조건), 여러개 지정 가능, NULL값 가질 수 있다, 테이블 생성 시 설정 가능.
 
 DEFAULT : NULL값이 들어올 경우 입력되지 않고, 정의된 기본 값이 자동으로 입력
 
@@ -112,6 +114,15 @@ TRUNCATE TABLE SQLD.TB_EMP_TEMP_3;
 
 DROP TABLE : 테이블 제거
 DROP TABLE SQLD.TB_EMP_TEMP_3;
+
+DELETE VS TRUNCATE
+DELETE는 WHERE절 없으면 TRUNCATE와 동일하게 모든 데이터가 삭제되고 테이블 스키마만 남는 빈 껍데기 형태.
+DELETE는 명령어는 데이터 복구가 가능하고, 로그를 남긴다.
+DELETE는 데이터 모두 DELETE 해도 Storage 삭제X
+TRUNCATE는 최초 테이블 생성 시 할당된 Storage만 남기고 삭제 (테이블 스키마 유지)
+
+사용법) DELETE FROM STUDENT;, TRUNCATE TABLE STUDENT;
+
 
 DML : INSERT, UPDATE,DELETE
 1. INSERT
