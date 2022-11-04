@@ -137,3 +137,31 @@ grouping sets
 
 grouping (컬럼) : 만약 컬럼이 집계된 컬럼이면 1 반환
 
+윈도우 함수 :
+행과 행간의 관계에서 다양한 연산처리 할 수 있는 함수
+분석함수(ansi표준)
+일반함수와 다르게 중첩하여 호출 불가
+
+종류
+1.순위관련
+rank, dense_rank, row_number
+2.집계
+sum,max,min,avg,count
+3.행순서
+first_value,last_value,lag,lead
+4.그룹내 비율
+cume_dist,percent_rank, ntile, ratio_to_report
+
+문법:
+select
+윈도우함수(인자) over(partition by 칼럼 order by 칼럼)
+윈도우절 (row,range)
+from 테이블명
+
+
+ratio_to_report(a.부서별연봉총액) : 총 부서 중 이 부서의 연봉 비율이 몇퍼센트를 차지하는가
+percent_rank() over(order by a.부서별연봉총액) : PERCENT_RANK를 사용하여 쿼리 결과 집합 또는 파티션 내에서 값의 상대 순위를 평가할 수 있습니다.
+cume_dist() : CUME_DIST 함수는 주어진 그룹에 대한 상대적인 누적분포도 값을 반환한다. 분포도 값(비율)이므로 반환 값의 범위는 0초과 1이하 사이의 값을 반환한다.
+예를들면 13개의 행이 있다면 각 cume_dist()칼럼은 1/13의 비율을 가짐.
+각 비율을 누적해서 계산. 0.077, 0.077+0.077=0.154, 0.077+0.077+0.077 = 0.231 ... 
+ntile(4) over(order by a.부서별연봉총액): 4등분하여 부서별연봉비율순서별등분결과. 즉 상위 25%, 상위 50%, 상위 75%, 상위 100%를 1,2,3,4로 표기
