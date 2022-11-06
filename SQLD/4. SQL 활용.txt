@@ -208,8 +208,16 @@ select count(*) from table
 group by 없이 where조건문에 맞는 select문이 없다면 0 출력, 왜냐하면 count(*)는 공집합도 0표기
 하지만 group by 와 함께 where조건문에 맞는 select문이 없다면 공집합 출력. 왜냐하면 gruop by 할 칼럼이 존재하지 않기 때문.
 
+집계함수 단독으로 쓰일 경우는 null 이 되던 0 되던 무조건 결과 row를 반환 하지만 위와같이 그룹절에 컬럼을 명시하였는데 결과값이 없는 경우라면 아무런 row를 반환하지 못함.
+group by를 사용하지 않으면 count(*)가 0으로 표시되지만 그룹함수인 group by를 사용하여 null을 리턴합니다.
+
 not in과 not exists 차이!
 not exists는 null도 계산
+NULL은 조인에 참여하지 못함
+-> IN은 조건에 만족하는걸 찾을 수 없다
+-> EXISTS 는 FALSE의 값을 RETURN한다.
+
+비교 연산자에서는 NULL이 배제된다.
 
 inner join : on,where,using사용가능
 left outer join: 실패한 값은 null로 표기됨
