@@ -138,3 +138,15 @@ sort merge join
 non-equal (between, >, >=, <, <=)조건 사용가능
 정렬작업 이후 조인
 배치, olap
+
+일반 집합 연산자
+1.UNION : UNION기능
+2.INTERSECTION : INTERSECT기능
+3.DIFFERECE : EXCEPT(ORACLE은 MINUS)
+4.PRODUCT : CROSS JOIN기능
+
+순수 관계 연산자
+1.SELECT : WHERE절로 구현
+2.PROJECT : SELECT절로 구현
+3.(NATURAL)JOIN : 다양한 JOIN기능으로 구현
+4.DIVIDE : 현재 사용 X
